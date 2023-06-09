@@ -26,7 +26,6 @@ public class SecurityConfig {
     private JwtAuthFilter authFilter;
 
     @Bean
-
     public UserDetailsService userDetailsService() {
         return new UserInfoUserDetailsService();
     }
@@ -35,7 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/register","/auth/token").permitAll()
+                .requestMatchers("/auth/userdetails","/auth/validate","/auth/register","/auth/token","/auth/user/{id}").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/")
                 .authenticated().and()
@@ -59,9 +58,9 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }

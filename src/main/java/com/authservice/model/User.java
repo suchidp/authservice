@@ -1,21 +1,27 @@
 package com.authservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String email;
-    private String password;
-    private String roles;
+    private Integer id;
 
+    @NotEmpty
+    @Size(min = 4, max = 32)
+    private String name;
+
+    @NotEmpty
+    @Size(min = 4, max = 32)
+    private String email;
+
+    @NotEmpty
+    private String password;
+
+    private String roles;
 }
