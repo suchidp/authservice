@@ -18,13 +18,11 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(com.authservice.exception.InvalidTokenException.class)
     public ResponseEntity<ExceptionResponse> invalidTokenException(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
-
     }
 
     /*
@@ -34,7 +32,6 @@ public class GlobalExceptionHandler {
 	 * @param request the current request
 	 * @return a  ResponseEntity for the response to use
      */
-
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, WebRequest request) {
@@ -49,7 +46,6 @@ public class GlobalExceptionHandler {
 	 * @param request the current request
 	 * @return a  ResponseEntity for the response to use
      */
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException ex, WebRequest request) {
@@ -57,7 +53,6 @@ public class GlobalExceptionHandler {
                 new ExceptionResponse(ex.getMessage());
         return new ResponseEntity<Object>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
-
 
     /*
     Exception Handling using Validations to check MethodArgumentNotValidException
@@ -68,8 +63,6 @@ public class GlobalExceptionHandler {
 	 * @param request
 	 * @return a  ResponseEntity for the response to use
      */
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex, WebRequest request) {
@@ -84,7 +77,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST);
     }
 
-
     /*
     Exception Handling  to check BindException
 	 * @param ex the exception to handle
@@ -98,8 +90,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<Object>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-
-
        /*
         Exception Handling  to check MethodArgumentTypeMismatch .
        It throws a type mismatch when trying  invalid parameter type conversion throws a TypeMismatchException,
@@ -108,7 +98,6 @@ public class GlobalExceptionHandler {
          * @param request the current request
          * @return a  ResponseEntity for the response to use
          */
-
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex, WebRequest request) {

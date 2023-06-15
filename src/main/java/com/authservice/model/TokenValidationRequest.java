@@ -1,5 +1,4 @@
 package com.authservice.model;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

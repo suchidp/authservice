@@ -28,7 +28,6 @@ public class JwtService {
         return encodedSecretKey;
     }
 
-
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -59,7 +58,6 @@ public class JwtService {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-
 
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();

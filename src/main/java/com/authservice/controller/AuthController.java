@@ -20,7 +20,7 @@ import java.util.List;
 public class AuthController {
 
     @Autowired
-    private UserService service;
+    private UserService userService;
 
     @Autowired
     private JwtService jwtService;
@@ -34,10 +34,13 @@ public class AuthController {
     @Autowired
     private UserInfoUserDetailsService userDetailsService;
 
-
     @PostMapping("/register")
     public String addNewUser(@RequestBody User user) {
-        return service.addUser(user);
+        if (userService.existsByEmail(user.getEmail())) {
+            return "Email already exists";
+        } else {
+            return userService.addUser(user);
+        }
     }
 
     @PostMapping("/validate")
@@ -46,12 +49,11 @@ public class AuthController {
         final String username = jwtService.extractUsername(token);
         UserDetails userDetailsFromDB = userDetailsService.loadUserByUsername(username);
         boolean isValidToken = username.equals(userDetailsFromDB.getUsername()) && !jwtService.isTokenExpired(token);
-
+        User user = userService.getUserByUsername(username);
         TokenValidationResponse response = new TokenValidationResponse();
+        response.setUser(user);
         response.setValidToken(isValidToken);
-        response.setName(username);
         response.setAuthorities((List<SimpleGrantedAuthority>) userDetailsFromDB.getAuthorities());
-        System.out.println("response from validate " + response);
         return response;
     }
 

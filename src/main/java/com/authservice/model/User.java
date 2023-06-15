@@ -1,5 +1,4 @@
 package com.authservice.model;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -24,4 +23,5 @@ public class User {
     private String password;
 
     private String roles;
+
 }

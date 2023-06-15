@@ -1,8 +1,6 @@
 package com.authservice.config;
 
-
 import com.authservice.model.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,16 +11,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Data
 @NoArgsConstructor
 public class UserInfoUserDetails implements UserDetails {
 
-
     private String name;
     private String password;
     private List<GrantedAuthority> authorities;
-
 
     public UserInfoUserDetails(User userInfo) {
         name = userInfo.getName();
@@ -31,7 +26,6 @@ public class UserInfoUserDetails implements UserDetails {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
