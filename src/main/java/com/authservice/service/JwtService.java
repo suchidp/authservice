@@ -1,16 +1,15 @@
 package com.authservice.service;
 
+import com.authservice.config.JwtEncryption;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,15 +17,8 @@ import java.util.function.Function;
 
 @Component
 public class JwtService {
-
-    @Value("${app.jwt.secret}")
-    private String jwtSecret;
-
-    private String encodeSecretKey() {
-        byte[] secretKeyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-        String encodedSecretKey = Base64.getEncoder().encodeToString(secretKeyBytes);
-        return encodedSecretKey;
-    }
+    @Autowired
+    private JwtEncryption jwtEncryption;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -74,7 +66,7 @@ public class JwtService {
     }
 
     private Key getSignKey() {
-        String encodedSecretKey = encodeSecretKey();
+        String encodedSecretKey = jwtEncryption.encodeSecretKey();
         byte[] keyBytes = Decoders.BASE64.decode(encodedSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }

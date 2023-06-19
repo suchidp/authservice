@@ -1,6 +1,7 @@
 package com.authservice.controller;
 
 import com.authservice.config.UserInfoUserDetailsService;
+import com.authservice.exception.AuthtenticationException;
 import com.authservice.exception.InvalidTokenException;
 import com.authservice.model.*;
 import com.authservice.repository.UserRepository;
@@ -11,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -47,23 +47,23 @@ public class AuthController {
     public TokenValidationResponse validateToken(@RequestBody TokenValidationRequest tokenValidationRequest) throws InvalidTokenException {
         String token = tokenValidationRequest.getToken();
         final String username = jwtService.extractUsername(token);
-        UserDetails userDetailsFromDB = userDetailsService.loadUserByUsername(username);
-        boolean isValidToken = username.equals(userDetailsFromDB.getUsername()) && !jwtService.isTokenExpired(token);
+        UserDetails userDetails  = userDetailsService.loadUserByUsername(username);
+        boolean isValidToken = username.equals(userDetails .getUsername()) && !jwtService.isTokenExpired(token);
         User user = userService.getUserByUsername(username);
         TokenValidationResponse response = new TokenValidationResponse();
         response.setUser(user);
         response.setValidToken(isValidToken);
-        response.setAuthorities((List<SimpleGrantedAuthority>) userDetailsFromDB.getAuthorities());
+        response.setAuthorities((List<SimpleGrantedAuthority>) userDetails .getAuthorities());
         return response;
     }
 
     @PostMapping("/token")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest)  throws AuthtenticationException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getName(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
             return jwtService.generateToken(authRequest.getName());
         } else {
-            throw new UsernameNotFoundException("invalid user request !");
+            throw new AuthtenticationException("invalid Authentication request !");
         }
     }
 }
