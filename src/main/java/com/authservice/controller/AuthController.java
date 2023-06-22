@@ -13,7 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,22 +46,25 @@ public class AuthController {
     @PostMapping("/validate")
     public TokenValidationResponse validateToken(@RequestBody TokenValidationRequest tokenValidationRequest) throws InvalidTokenException {
         String token = tokenValidationRequest.getToken();
-        final String username = jwtService.extractUsername(token);
-        UserDetails userDetails  = userDetailsService.loadUserByUsername(username);
-        boolean isValidToken = username.equals(userDetails .getUsername()) && !jwtService.isTokenExpired(token);
-        User user = userService.getUserByUsername(username);
+        final String email = jwtService.extractUsername(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        boolean isValidToken = email.equals(userDetails.getUsername()) && !jwtService.isTokenExpired(token);
+        User user = userService.getUserByUsername(email);
+        String role = user.getRoles().toString();
         TokenValidationResponse response = new TokenValidationResponse();
-        response.setUser(user);
+        response.setRole(role);
         response.setValidToken(isValidToken);
-        response.setAuthorities((List<SimpleGrantedAuthority>) userDetails .getAuthorities());
+        response.setAuthorities(userDetails.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                .collect(Collectors.toList()));
         return response;
     }
 
     @PostMapping("/token")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest)  throws AuthtenticationException {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getName(), authRequest.getPassword()));
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws AuthtenticationException {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getName());
+            return jwtService.generateToken(authRequest.getEmail());
         } else {
             throw new AuthtenticationException("invalid Authentication request !");
         }

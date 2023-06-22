@@ -1,7 +1,11 @@
 CREATE TABLE user (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(32) NOT NULL,
-  email VARCHAR(32) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  roles VARCHAR(255)
+  firstName VARCHAR(32) NOT NULL,
+  lastName VARCHAR(32) NOT NULL,
+  password VARCHAR(32) NOT NULL,
+  email VARCHAR(32) NOT NULL UNIQUE,
+  accountNonExpired BOOLEAN NOT NULL,
+  accountNonLocked BOOLEAN NOT NULL,
+  credentialsNonExpired BOOLEAN NOT NULL,
+  enabled BOOLEAN NOT NULL
 );

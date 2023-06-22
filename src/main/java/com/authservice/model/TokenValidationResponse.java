@@ -11,5 +11,5 @@ import java.util.List;
 public class TokenValidationResponse {
     private boolean isValidToken;
     private List<SimpleGrantedAuthority> authorities;
-    private User user;
+    private String role;
 }

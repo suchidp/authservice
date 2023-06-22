@@ -1,29 +1,37 @@
 
 package com.authservice.config;
+
+import com.authservice.model.Role;
 import com.authservice.model.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 public class UserInfoUserDetails implements UserDetails {
 
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String email;
     private String password;
     private List<GrantedAuthority> authorities;
+    private Set<Role> roles;
 
     public UserInfoUserDetails(User userInfo) {
-        name = userInfo.getName();
-        password = userInfo.getPassword();
-        authorities = Arrays.stream(userInfo.getRoles().split(","))
-                .map(SimpleGrantedAuthority::new)
+        this.firstName = userInfo.getFirstName();
+        this.lastName = userInfo.getLastName();
+        this.email = userInfo.getEmail();
+        this.password = userInfo.getPassword();
+        this.roles = userInfo.getRoles();
+        this.authorities = userInfo.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.toString()))
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +47,7 @@ public class UserInfoUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override

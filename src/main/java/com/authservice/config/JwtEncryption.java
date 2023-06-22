@@ -11,7 +11,7 @@ public class JwtEncryption {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    public String encodeSecretKey() {
+    public String getEncodeSecretKey(){
         byte[] secretKeyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         String encodedSecretKey = Base64.getEncoder().encodeToString(secretKeyBytes);
         return encodedSecretKey;
