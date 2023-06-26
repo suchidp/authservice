@@ -42,12 +42,13 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    private boolean accountNonExpired = true;
+    private boolean accountNonExpired = Boolean.TRUE;
 
-    private boolean accountNonLocked = true;
+    private boolean accountNonLocked = Boolean.TRUE;
 
-    private boolean credentialsNonExpired = true;
+    private boolean credentialsNonExpired = Boolean.TRUE;
 
-    private boolean enabled = true;
+    private boolean enabled = Boolean.TRUE;
 
 }
+

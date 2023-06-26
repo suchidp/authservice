@@ -1,6 +1,8 @@
 package com.authservice.controller;
 
 import com.authservice.config.UserInfoUserDetailsService;
+import com.authservice.controller.request.UserRequest;
+import com.authservice.controller.request.UserResponse;
 import com.authservice.exception.AuthtenticationException;
 import com.authservice.exception.InvalidTokenException;
 import com.authservice.model.*;
@@ -8,6 +10,8 @@ import com.authservice.repository.UserRepository;
 import com.authservice.service.JwtService;
 import com.authservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,11 +39,12 @@ public class AuthController {
     private UserInfoUserDetailsService userDetailsService;
 
     @PostMapping("/register")
-    public String addNewUser(@RequestBody User user) {
-        if (userService.existsByEmail(user.getEmail())) {
-            return "Email already exists";
+    public ResponseEntity<?> addNewUser(@RequestBody UserRequest userRequest) {
+        if (userService.existsByEmail(userRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already exists");
         } else {
-            return userService.addUser(user);
+            User user = userRequest.toEntity(userRequest);
+            return new ResponseEntity<>(UserResponse.fromEntity(userService.addUser(user)), HttpStatus.CREATED);
         }
     }
 
@@ -61,13 +66,17 @@ public class AuthController {
     }
 
     @PostMapping("/token")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws AuthtenticationException {
+    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws AuthtenticationException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getEmail());
+            User user = userService.getUserByUsername(authRequest.getEmail());
+            System.out.println("user:" + user);
+            if (!user.isAccountNonExpired() || !user.isAccountNonLocked() || !user.isCredentialsNonExpired() || !user.isEnabled()) {
+                return ResponseEntity.badRequest().body("Account is not valid");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(jwtService.generateToken(authRequest.getEmail()));
         } else {
-            throw new AuthtenticationException("invalid Authentication request !");
+            throw new AuthtenticationException("invalid user request !");
         }
     }
 }
-

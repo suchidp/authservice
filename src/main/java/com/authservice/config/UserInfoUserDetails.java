@@ -21,6 +21,13 @@ public class UserInfoUserDetails implements UserDetails {
     private String lastName;
     private String email;
     private String password;
+    private boolean accountNonExpired;
+
+    private boolean accountNonLocked ;
+
+    private boolean credentialsNonExpired;
+
+    private boolean enabled;
     private List<GrantedAuthority> authorities;
     private Set<Role> roles;
 
@@ -30,6 +37,10 @@ public class UserInfoUserDetails implements UserDetails {
         this.email = userInfo.getEmail();
         this.password = userInfo.getPassword();
         this.roles = userInfo.getRoles();
+        this.accountNonExpired=userInfo.isAccountNonExpired();
+        this.accountNonLocked = userInfo.isAccountNonLocked();
+        this.credentialsNonExpired=userInfo.isCredentialsNonExpired();
+        this.enabled=userInfo.isEnabled();
         this.authorities = userInfo.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.toString()))
                 .collect(Collectors.toList());

@@ -18,13 +18,18 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(com.authservice.exception.AuthtenticationException.class)
+    public ResponseEntity<ExceptionResponse> authtenticationException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse =
+                new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
     @ExceptionHandler(com.authservice.exception.InvalidTokenException.class)
     public ResponseEntity<ExceptionResponse> invalidTokenException(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
-
     /*
      Exception Handling of   handleHttpRequestMethodNotSupported
     Using HttpRequestMethodNotSupportedException check Method is supported or not
