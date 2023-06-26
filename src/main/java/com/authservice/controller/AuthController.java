@@ -70,7 +70,6 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
             User user = userService.getUserByUsername(authRequest.getEmail());
-            System.out.println("user:" + user);
             if (!user.isAccountNonExpired() || !user.isAccountNonLocked() || !user.isCredentialsNonExpired() || !user.isEnabled()) {
                 return ResponseEntity.badRequest().body("Account is not valid");
             }
